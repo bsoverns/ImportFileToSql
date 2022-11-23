@@ -75,6 +75,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="FileExamples\crash_catalonia.csv" />
+    <None Include="FileExamples\hw_25000.csv" />
+    <None Include="FileExamples\mlb_teams_2012.csv" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -91,5 +94,6 @@
   <ItemGroup>
     <Content Include="Icons\hnet.com-image.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

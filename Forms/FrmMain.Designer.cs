@@ -46,6 +46,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.grpBoxExportType = new System.Windows.Forms.GroupBox();
+            this.cmbFileType = new System.Windows.Forms.ComboBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.cmbThreadCount = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
             this.cmbQuoted = new System.Windows.Forms.ComboBox();
@@ -58,8 +60,6 @@
             this.label8 = new System.Windows.Forms.Label();
             this.btnFolder = new System.Windows.Forms.Button();
             this.txtFolder = new System.Windows.Forms.TextBox();
-            this.cmbFileType = new System.Windows.Forms.ComboBox();
-            this.label10 = new System.Windows.Forms.Label();
             this.grpFileImport.SuspendLayout();
             this.grpDatabaseLogin.SuspendLayout();
             this.grpBoxExportType.SuspendLayout();
@@ -238,6 +238,27 @@
             this.grpBoxExportType.TabStop = false;
             this.grpBoxExportType.Text = "Export Type";
             // 
+            // cmbFileType
+            // 
+            this.cmbFileType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbFileType.FormattingEnabled = true;
+            this.cmbFileType.Items.AddRange(new object[] {
+            "*.csv",
+            "*.txt"});
+            this.cmbFileType.Location = new System.Drawing.Point(120, 97);
+            this.cmbFileType.Name = "cmbFileType";
+            this.cmbFileType.Size = new System.Drawing.Size(146, 21);
+            this.cmbFileType.TabIndex = 11;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(72, 100);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(31, 13);
+            this.label10.TabIndex = 10;
+            this.label10.Text = "Type";
+            // 
             // cmbThreadCount
             // 
             this.cmbThreadCount.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -306,8 +327,8 @@
             this.cmbDelimiter.Items.AddRange(new object[] {
             "comma (,)",
             "pip (|)",
-            "Fixed Width",
-            "Embedded File"});
+            "Fixed Width (Currently Incomplete)",
+            "Embedded File (Currently Incomplete)"});
             this.cmbDelimiter.Location = new System.Drawing.Point(120, 17);
             this.cmbDelimiter.Name = "cmbDelimiter";
             this.cmbDelimiter.Size = new System.Drawing.Size(146, 21);
@@ -389,27 +410,6 @@
             this.txtFolder.Name = "txtFolder";
             this.txtFolder.Size = new System.Drawing.Size(519, 20);
             this.txtFolder.TabIndex = 0;
-            // 
-            // cmbFileType
-            // 
-            this.cmbFileType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbFileType.FormattingEnabled = true;
-            this.cmbFileType.Items.AddRange(new object[] {
-            "*.csv",
-            "*.txt"});
-            this.cmbFileType.Location = new System.Drawing.Point(120, 97);
-            this.cmbFileType.Name = "cmbFileType";
-            this.cmbFileType.Size = new System.Drawing.Size(146, 21);
-            this.cmbFileType.TabIndex = 11;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(72, 100);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(31, 13);
-            this.label10.TabIndex = 10;
-            this.label10.Text = "Type";
             // 
             // FrmMain
             // 

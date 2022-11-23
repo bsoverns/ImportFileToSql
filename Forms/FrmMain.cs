@@ -2,6 +2,8 @@
 //('DROP TABLE .[' + TABLE_SCHEMA + '].[' + TABLE_NAME + ']')[DROP],
 //*FROM INFORMATION_SCHEMA.TABLES
 
+//CSV EXAMPLE SOURCE: https://people.sc.fsu.edu/~jburkardt/data/csv/csv.html
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,6 +30,8 @@ namespace FileReadToSQLDB
         int threadCountToUse = 0;
         int fileProcessThreadCount = 0;
         string fileType = "*.csv";
+        bool isQuoted = false;
+        string delimiters = ",";        
         SQLConnectionClass SQLConnect = new SQLConnectionClass("", "", "", "", false);
 
         public FrmMain()
@@ -139,6 +143,10 @@ namespace FileReadToSQLDB
             cmbQuoted.Enabled = false;
             grpFileImport.Enabled = false;
             grpFolderImport.Enabled = false;
+            delimiters = DelimiterTypeCheck(cmbDelimiter.SelectedItem.ToString());
+            isQuoted = Convert.ToBoolean(cmbQuoted.SelectedItem.ToString());
+            fileType = cmbFileType.SelectedItem.ToString();
+
             //Thread process_file = new Thread(processFile);
             Thread process_file = new Thread(() => processFile(txtFile.Text.ToString()));
             process_file.IsBackground = true;
@@ -170,8 +178,8 @@ namespace FileReadToSQLDB
                         string valueQueryBuilder = " VALUES (";
 
                         parser.TextFieldType = FieldType.Delimited;
-                        parser.HasFieldsEnclosedInQuotes = true;
-                        parser.SetDelimiters(",");
+                        parser.HasFieldsEnclosedInQuotes = isQuoted;
+                        parser.SetDelimiters(delimiters);
 
                         while(!parser.EndOfData)
                         {
@@ -346,6 +354,8 @@ namespace FileReadToSQLDB
         private void button1_Click(object sender, EventArgs e)
         {            
             threadCountToUse = Process.GetCurrentProcess().Threads.Count + 1 + Convert.ToInt32(cmbThreadCount.SelectedItem.ToString());
+            delimiters = DelimiterTypeCheck(cmbDelimiter.SelectedItem.ToString());
+            isQuoted = Convert.ToBoolean(cmbQuoted.SelectedItem.ToString());
             fileType = cmbFileType.SelectedItem.ToString();
             cmbDelimiter.Enabled = false;
             cmbQuoted.Enabled = false;
@@ -392,6 +402,32 @@ namespace FileReadToSQLDB
                     }
                 }
             }
+        }
+
+        private string DelimiterTypeCheck(string characterSelect)
+        {
+            string returnCharacter = characterSelect;
+
+            switch (characterSelect)
+            {
+                case "comma (,)":
+                    returnCharacter= ",";
+                    break;
+                case "pip (|)":
+                    returnCharacter = "|";
+                    break;
+                case "Fixed Width": //This code is not complete.
+                    returnCharacter = ",";
+                    break;
+                case "Embedded File": //This code is not complete.
+                    returnCharacter = ",";
+                    break;
+                default:
+                    returnCharacter = ",";
+                    break;
+            }     
+            
+            return returnCharacter;
         }
 
         private bool ValidateDirectory()
