@@ -406,16 +406,19 @@ namespace FileReadToSQLDB
 
         private string DelimiterTypeCheck(string characterSelect)
         {
-            string returnCharacter = characterSelect;
+            string returnCharacter = ",";
 
             switch (characterSelect)
             {
-                case "comma (,)":
+                case "Comma (,)":
                     returnCharacter= ",";
                     break;
-                case "pip (|)":
+                case "Pipe (|)":
                     returnCharacter = "|";
                     break;
+                case "Tab(\t)":
+                    returnCharacter = "\t";
+                    break;                    
                 case "Fixed Width": //This code is not complete.
                     returnCharacter = ",";
                     break;
