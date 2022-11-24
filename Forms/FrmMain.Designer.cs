@@ -325,8 +325,9 @@
             this.cmbDelimiter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbDelimiter.FormattingEnabled = true;
             this.cmbDelimiter.Items.AddRange(new object[] {
-            "comma (,)",
-            "pip (|)",
+            "Comma (,)",
+            "Pipe (|)",
+            "Tab (\\t)",
             "Fixed Width (Currently Incomplete)",
             "Embedded File (Currently Incomplete)"});
             this.cmbDelimiter.Location = new System.Drawing.Point(120, 17);
@@ -355,11 +356,11 @@
             // lblTestLabel
             // 
             this.lblTestLabel.AutoSize = true;
-            this.lblTestLabel.Location = new System.Drawing.Point(523, 151);
+            this.lblTestLabel.Location = new System.Drawing.Point(403, 154);
             this.lblTestLabel.Name = "lblTestLabel";
-            this.lblTestLabel.Size = new System.Drawing.Size(35, 13);
+            this.lblTestLabel.Size = new System.Drawing.Size(115, 13);
             this.lblTestLabel.TabIndex = 28;
-            this.lblTestLabel.Text = "label8";
+            this.lblTestLabel.Text = "Item Processing Status";
             // 
             // grpFolderImport
             // 
