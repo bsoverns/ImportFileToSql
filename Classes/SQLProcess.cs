@@ -13,62 +13,120 @@ using System.Windows.Forms;
 
 namespace FileReadToSQLDB
 {
-    class SQLGBSCustomProcess
+    // SQLCustomProcess.cs (replace with this)
+    using System;
+    using System.Data.SqlClient;
+    using System.Net;
+
+    namespace FileReadToSQLDB
     {
-        public void SqlCommandProcess(string sqlCommandQuery, SQLConnectionClass SQLConnect, string FilePath)
+        class SQLCustomProcess : IDisposable
         {
-            LogWriter errorLog = new LogWriter();
-            SqlConnection sqlConnString = new SqlConnection("Data Source=" + SQLConnect.dataSource + ";Initial Catalog=" + SQLConnect.initialCatalog + ";User ID=" + SQLConnect.userID + ";Password=" + SQLConnect.password + ";Connect Timeout = 10;");
+            private SqlConnection _conn;
+            private SqlTransaction _tx;
+            private bool _initialized;
 
-            try
+            public void Initialize(SQLConnectionClass SQLConnect)
             {
-                if (SQLConnect.useIPAdress == true)
-                {
-                    IPAddress ip = new IPHelper().get_ip_from_host_name(SQLConnect.dataSource);
-                    sqlConnString = new SqlConnection("Data Source=" + ip.ToString() + ";Initial Catalog=" + SQLConnect.initialCatalog + ";User ID=" + SQLConnect.userID + ";Password=" + SQLConnect.password + ";Connect Timeout = 10;");
+                if (_initialized) return;
 
-                    //MessageBox.Show(ip.ToString());
+                string dataSource = SQLConnect.dataSource;
+
+                if (SQLConnect.useIPAdress)
+                {
+                    var ip = new IPHelper().get_ip_from_host_name(SQLConnect.dataSource);
+                    dataSource = ip?.ToString() ?? SQLConnect.dataSource;
                 }
 
-                SqlCommand queryCommand = sqlConnString.CreateCommand();
-                queryCommand.CommandText = sqlCommandQuery;                
+                string cs = $"Data Source={dataSource};Initial Catalog={SQLConnect.initialCatalog};User ID={SQLConnect.userID};Password={SQLConnect.password};Connect Timeout=30;";
 
-                if (sqlConnString.State.ToString() == "Closed")
-                {
-                    sqlConnString.Open();
-                }
-
-                queryCommand.ExecuteNonQuery();
+                _conn = new SqlConnection(cs);
+                _conn.Open();
+                _tx = _conn.BeginTransaction();   // one tx for all statements in this file
+                _initialized = true;
             }
 
-            catch (Exception ex)
+            public void ExecuteNonQuery(string sql)
             {
-                MessageBox.Show(ex.ToString());
-                errorLog.write_log(FilePath.ToString(), sqlCommandQuery.ToString());
-            }
-
-            finally
-            {
-                if (sqlConnString.State.ToString() == "Open")
+                using (var cmd = _conn.CreateCommand())
                 {
-                    sqlConnString.Close();
+                    cmd.Transaction = _tx;
+                    cmd.CommandTimeout = 0;       // long batches okay
+                    cmd.CommandText = sql;
+                    cmd.ExecuteNonQuery();
                 }
             }
-        }
 
-        public string cleanEnc(string encNbr)
-        {
-            Regex digitsOnly = new Regex(@"[^\d]");
-            return digitsOnly.Replace(encNbr, "");
-        }
+            public void Commit()
+            {
+                _tx?.Commit();
+            }
 
-        public string cleanBody(string body)
-        {
-            string newBody = body.Replace("\r\n", "\r");
-            newBody = newBody.Replace("\n", "\r");
-            newBody = newBody.Replace("\r", "\r\n");
-            return newBody;
+            public void Dispose()
+            {
+                try { _tx?.Dispose(); } catch { }
+                try { if (_conn?.State == System.Data.ConnectionState.Open) _conn.Close(); } catch { }
+                try { _conn?.Dispose(); } catch { }
+            }
         }
     }
+
+    //class SQLCustomProcess
+    //{
+    //    public void SqlCommandProcess(string sqlCommandQuery, SQLConnectionClass SQLConnect, string FilePath)
+    //    {
+    //        LogWriter errorLog = new LogWriter();
+    //        SqlConnection sqlConnString = new SqlConnection("Data Source=" + SQLConnect.dataSource + ";Initial Catalog=" + SQLConnect.initialCatalog + ";User ID=" + SQLConnect.userID + ";Password=" + SQLConnect.password + ";Connect Timeout = 10;");
+
+    //        try
+    //        {
+    //            if (SQLConnect.useIPAdress == true)
+    //            {
+    //                IPAddress ip = new IPHelper().get_ip_from_host_name(SQLConnect.dataSource);
+    //                sqlConnString = new SqlConnection("Data Source=" + ip.ToString() + ";Initial Catalog=" + SQLConnect.initialCatalog + ";User ID=" + SQLConnect.userID + ";Password=" + SQLConnect.password + ";Connect Timeout = 10;");
+
+    //                //MessageBox.Show(ip.ToString());
+    //            }
+
+    //            SqlCommand queryCommand = sqlConnString.CreateCommand();
+    //            queryCommand.CommandText = sqlCommandQuery;                
+
+    //            if (sqlConnString.State.ToString() == "Closed")
+    //            {
+    //                sqlConnString.Open();
+    //            }
+
+    //            queryCommand.ExecuteNonQuery();
+    //        }
+
+    //        catch (Exception ex)
+    //        {
+    //            MessageBox.Show(ex.ToString());
+    //            errorLog.write_log(FilePath.ToString(), sqlCommandQuery.ToString());
+    //        }
+
+    //        finally
+    //        {
+    //            if (sqlConnString.State.ToString() == "Open")
+    //            {
+    //                sqlConnString.Close();
+    //            }
+    //        }
+    //    }
+
+    //    public string cleanEnc(string encNbr)
+    //    {
+    //        Regex digitsOnly = new Regex(@"[^\d]");
+    //        return digitsOnly.Replace(encNbr, "");
+    //    }
+
+    //    public string cleanBody(string body)
+    //    {
+    //        string newBody = body.Replace("\r\n", "\r");
+    //        newBody = newBody.Replace("\n", "\r");
+    //        newBody = newBody.Replace("\r", "\r\n");
+    //        return newBody;
+    //    }
+    //}
 }
 

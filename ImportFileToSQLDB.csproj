@@ -92,6 +92,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="FileExamples\SQLVoterInsert.txt" />
     <Content Include="Icons\hnet.com-image.ico" />
   </ItemGroup>
   <ItemGroup />

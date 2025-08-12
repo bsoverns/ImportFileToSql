@@ -1,0 +1,228 @@
+﻿drop table ohio
+CREATE TABLE OHIO (
+    SOSVoterId CHAR(13) PRIMARY KEY,  -- Unique identifier
+    CountyNumber TINYINT NULL,  -- 1-88, saves space
+    CountyId VARCHAR(50) NULL,
+    LastName VARCHAR(50) NULL,
+    FirstName VARCHAR(50) NULL,
+    MiddleName VARCHAR(50) NULL,
+    Suffix VARCHAR(10) NULL,
+    DateOfBirth DATE NULL,
+    RegistrationDate DATE NULL,
+    VoterStatus VARCHAR(12) NULL,
+    PartyAffiliation CHAR(1) CHECK (PartyAffiliation IN ('C', 'D', 'E', 'G', 'L', 'N', 'R', 'S', 'X', '')) NULL,
+
+    -- Residential Address
+    ResidentialAddress1 VARCHAR(100) NULL,
+    ResidentialAddress2 VARCHAR(100) NULL,
+    ResidentialCity VARCHAR(50) NULL,
+    ResidentialState VARCHAR(20) NULL,
+    ResidentialZip CHAR(5) NULL,
+    ResidentialZipPlus4 CHAR(4) NULL,
+    ResidentialCountry VARCHAR(50) NULL,
+    ResidentialPostalCode VARCHAR(10) NULL,
+
+    -- Mailing Address
+    MailingAddress1 VARCHAR(100) NULL,
+    MailingAddress2 VARCHAR(100) NULL,
+    MailingCity VARCHAR(50) NULL,
+    MailingState VARCHAR(20) NULL,
+    MailingZip CHAR(5) NULL,
+    MailingZipPlus4 CHAR(4) NULL,
+    MailingCountry VARCHAR(50) NULL,
+    MailingPostalCode VARCHAR(10) NULL,
+
+    -- District & School Info
+    CareerCenter VARCHAR(80) NULL,
+    City VARCHAR(80) NULL,
+    CitySchoolDistrict VARCHAR(80) NULL,
+    CountyCourtDistrict VARCHAR(80) NULL,
+    CongressionalDistrict CHAR(2) NULL,
+    CourtOfAppeals CHAR(2) NULL,
+    EducationServiceCenter VARCHAR(80) NULL,
+    ExemptedVillageSchoolDistrict VARCHAR(80) NULL,
+    LibraryDistrict VARCHAR(80) NULL,
+    LocalSchoolDistrict VARCHAR(80) NULL,
+    MunicipalCourtDistrict VARCHAR(80) NULL,
+    Precinct VARCHAR(80) NULL,
+    PrecinctCode VARCHAR(20) NULL,
+    StateBoardOfEducation CHAR(2) NULL,
+    StateRepresentativeDistrict CHAR(2) NULL,
+    StateSenateDistrict CHAR(2) NULL,
+    Township VARCHAR(30) NULL,
+    Village VARCHAR(30) NULL,
+    Ward VARCHAR(30) NULL--,
+
+    ---- Indexes for fast lookup
+    --INDEX IX_Voters_CountyId (CountyId),
+    --INDEX IX_Voters_Name (LastName, FirstName),
+    --INDEX IX_Voters_DateOfBirth (DateOfBirth),
+    --INDEX IX_Voters_PartyAffiliation (PartyAffiliation),
+    --INDEX IX_Voters_PrecinctCode (PrecinctCode)
+);
+
+
+select * from ohiobackup
+
+--SELECT ('SELECT * FROM [' + TABLE_NAME + ']') FROM INFORMATION_SCHEMA.TABLES
+
+SELECT SUM(TOTAL)
+FROM 
+(
+	SELECT COUNT(*) AS TOTAL FROM [SWVF_67_88.txt]
+	UNION ALL
+	SELECT COUNT(*) AS TOTAL FROM [SWVF_23_44.txt]
+	UNION ALL
+	SELECT COUNT(*) AS TOTAL FROM [SWVF_1_22.txt]
+	UNION ALL
+	SELECT COUNT(*) AS TOTAL FROM [SWVF_45_66.txt]
+) a
+
+SELECT TOP 5 * FROM [SWVF_23_44.txt]
+SELECT TOP 5 * FROM [SWVF_67_88.txt]
+SELECT TOP 5 * FROM [SWVF_1_22.txt]
+SELECT TOP 5 * FROM [SWVF_45_66.txt]
+SELECT TOP 5 * FROM [OHIO]
+
+sp_columns 'SWVF_23_44.txt'
+
+INSERT INTO OHIO(SOSVoterId, CountyNumber, CountyId, LastName, FirstName, MiddleName, Suffix, DateOfBirth, RegistrationDate, VoterStatus, PartyAffiliation, ResidentialAddress1, ResidentialAddress2, ResidentialCity, ResidentialState, ResidentialZip, ResidentialZipPlus4, ResidentialCountry, ResidentialPostalCode, MailingAddress1, MailingAddress2, MailingCity, MailingState, MailingZip, MailingZipPlus4, MailingCountry, MailingPostalCode, CareerCenter, City, CitySchoolDistrict, CountyCourtDistrict, CongressionalDistrict, CourtOfAppeals, EducationServiceCenter, ExemptedVillageSchoolDistrict, LibraryDistrict, LocalSchoolDistrict, MunicipalCourtDistrict, Precinct, PrecinctCode, StateBoardOfEducation, StateRepresentativeDistrict, StateSenateDistrict, Township, Village, Ward)
+SELECT a.SOS_VOTERID, a.COUNTY_NUMBER, a.COUNTY_ID, a.LAST_NAME, a.FIRST_NAME, a.MIDDLE_NAME, a.SUFFIX, a.DATE_OF_BIRTH, a.REGISTRATION_DATE, a.VOTER_STATUS, a.PARTY_AFFILIATION, a.RESIDENTIAL_ADDRESS1, a.RESIDENTIAL_SECONDARY_ADDR, a.RESIDENTIAL_CITY, a.RESIDENTIAL_STATE, a.RESIDENTIAL_ZIP, a.RESIDENTIAL_ZIP_PLUS4, a.RESIDENTIAL_COUNTRY, a.RESIDENTIAL_POSTALCODE, a.MAILING_ADDRESS1, a.MAILING_SECONDARY_ADDRESS, a.MAILING_CITY, a.MAILING_STATE, a.MAILING_ZIP, a.MAILING_ZIP_PLUS4, a.MAILING_COUNTRY, a.MAILING_POSTAL_CODE, a.CAREER_CENTER, a.CITY, a.CITY_SCHOOL_DISTRICT, a.COUNTY_COURT_DISTRICT, a.CONGRESSIONAL_DISTRICT, a.COURT_OF_APPEALS, a.EDU_SERVICE_CENTER_DISTRICT, a.EXEMPTED_VILL_SCHOOL_DISTRICT, a.LIBRARY, a.LOCAL_SCHOOL_DISTRICT, a.MUNICIPAL_COURT_DISTRICT, a.PRECINCT_NAME, a.PRECINCT_CODE, a.STATE_BOARD_OF_EDUCATION, a.STATE_REPRESENTATIVE_DISTRICT, a.STATE_SENATE_DISTRICT, a.TOWNSHIP, a.VILLAGE, a.WARD
+FROM 
+(
+	SELECT * FROM [SWVF_67_88.txt]
+	UNION ALL
+	SELECT * FROM [SWVF_23_44.txt]
+	UNION ALL
+	SELECT * FROM [SWVF_1_22.txt]
+	UNION ALL
+	SELECT * FROM [SWVF_45_66.txt]
+) a
+WHERE NOT EXISTS(SELECT 1 FROM OHIO WHERE SOSVoterId = a.SOS_VOTERID)
+
+SELECT * FROM OHIO WHERE LastName = 'harsanye'
+SELECT * FROM OHIOBACKUP WHERE LastName = 'harsanye'
+
+-- Step 1: Create the Temp Table for Results
+IF OBJECT_ID('tempdb..#TempResults') IS NOT NULL DROP TABLE #TempResults;
+
+CREATE TABLE #TempResults (
+    FieldName NVARCHAR(128),
+    FieldType NVARCHAR(50),
+	FieldMaxLength INT,
+    MaxLength INT,
+    ExampleData NVARCHAR(MAX)
+);
+
+-- Step 2: Create a Mapping Table for Column Name Differences
+IF OBJECT_ID('tempdb..#ColumnMapping') IS NOT NULL DROP TABLE #TempResults;
+
+CREATE TABLE #ColumnMapping (
+    OhioColumn NVARCHAR(128),
+    SourceColumn NVARCHAR(128)
+);
+
+INSERT INTO #ColumnMapping (OhioColumn, SourceColumn)
+VALUES
+    ('SOSVoterId', 'SOS_VOTERID'),
+    ('CountyNumber', 'COUNTY_NUMBER'),
+    ('CountyId', 'COUNTY_ID'),
+    ('LastName', 'LAST_NAME'),
+    ('FirstName', 'FIRST_NAME'),
+    ('MiddleName', 'MIDDLE_NAME'),
+    ('Suffix', 'SUFFIX'),
+    ('DateOfBirth', 'DATE_OF_BIRTH'),
+    ('RegistrationDate', 'REGISTRATION_DATE'),
+    ('VoterStatus', 'VOTER_STATUS'),
+    ('PartyAffiliation', 'PARTY_AFFILIATION'),
+    ('ResidentialAddress1', 'RESIDENTIAL_ADDRESS1'),
+    ('ResidentialAddress2', 'RESIDENTIAL_SECONDARY_ADDR'),
+    ('ResidentialCity', 'RESIDENTIAL_CITY'),
+    ('ResidentialState', 'RESIDENTIAL_STATE'),
+    ('ResidentialZip', 'RESIDENTIAL_ZIP'),
+    ('ResidentialZipPlus4', 'RESIDENTIAL_ZIP_PLUS4'),
+    ('ResidentialCountry', 'RESIDENTIAL_COUNTRY'),
+    ('ResidentialPostalCode', 'RESIDENTIAL_POSTALCODE'),
+    ('MailingAddress1', 'MAILING_ADDRESS1'),
+    ('MailingAddress2', 'MAILING_SECONDARY_ADDRESS'),
+    ('MailingCity', 'MAILING_CITY'),
+    ('MailingState', 'MAILING_STATE'),
+    ('MailingZip', 'MAILING_ZIP'),
+    ('MailingZipPlus4', 'MAILING_ZIP_PLUS4'),
+    ('MailingCountry', 'MAILING_COUNTRY'),
+    ('MailingPostalCode', 'MAILING_POSTAL_CODE'),
+    ('CareerCenter', 'CAREER_CENTER'),
+    ('City', 'CITY'),
+    ('CitySchoolDistrict', 'CITY_SCHOOL_DISTRICT'),
+    ('CountyCourtDistrict', 'COUNTY_COURT_DISTRICT'),
+    ('CongressionalDistrict', 'CONGRESSIONAL_DISTRICT'),
+    ('CourtOfAppeals', 'COURT_OF_APPEALS'),
+    ('EducationServiceCenter', 'EDU_SERVICE_CENTER_DISTRICT'),
+    ('ExemptedVillageSchoolDistrict', 'EXEMPTED_VILL_SCHOOL_DISTRICT'),
+    ('LibraryDistrict', 'LIBRARY'),
+    ('LocalSchoolDistrict', 'LOCAL_SCHOOL_DISTRICT'),
+    ('MunicipalCourtDistrict', 'MUNICIPAL_COURT_DISTRICT'),
+    ('Precinct', 'PRECINCT_NAME'),
+    ('PrecinctCode', 'PRECINCT_CODE'),
+    ('StateBoardOfEducation', 'STATE_BOARD_OF_EDUCATION'),
+    ('StateRepresentativeDistrict', 'STATE_REPRESENTATIVE_DISTRICT'),
+    ('StateSenateDistrict', 'STATE_SENATE_DISTRICT'),
+    ('Township', 'TOWNSHIP'),
+    ('Village', 'VILLAGE'),
+    ('Ward', 'WARD');
+
+-- Step 3: Cursor to Loop Through Each Column in OHIO Table
+DECLARE @OhioColumn NVARCHAR(128),
+        @SourceColumn NVARCHAR(128),
+        @ColumnType NVARCHAR(50), 
+        @MaxLength INT, 
+        @SQL NVARCHAR(MAX);
+
+DECLARE cur 
+	CURSOR FOR 
+		SELECT 
+			c.COLUMN_NAME AS OhioColumn,
+			cm.SourceColumn,
+			c.DATA_TYPE + 
+			CASE 
+				WHEN c.CHARACTER_MAXIMUM_LENGTH IS NOT NULL THEN '(' + CAST(c.CHARACTER_MAXIMUM_LENGTH AS NVARCHAR) + ')'
+				ELSE ''
+			END AS FieldType,
+			ISNULL(c.CHARACTER_MAXIMUM_LENGTH, 0) AS [CHARACTER_MAXIMUM_LENGTH]
+		FROM INFORMATION_SCHEMA.COLUMNS c
+		JOIN #ColumnMapping cm ON c.COLUMN_NAME = cm.OhioColumn
+		WHERE c.TABLE_NAME = 'OHIO';
+
+OPEN cur;
+FETCH NEXT FROM cur INTO @OhioColumn, @SourceColumn, @ColumnType, @MaxLength;
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    -- Step 4: Build Dynamic SQL to Check Max Length in Source Data (Using Correct Column Name)
+    SET @SQL = '
+INSERT INTO #TempResults (FieldName, FieldType, FieldMaxLength, MaxLength, ExampleData)
+SELECT TOP 1 ''' + @OhioColumn + ''', ''' + @ColumnType + ''', ''' + CONVERT(NVARCHAR, @MaxLength) + ''', LEN([' + @SourceColumn + ']), [' + @SourceColumn + ']
+FROM (
+    SELECT ' + @SourceColumn + ' FROM [SWVF_67_88.txt]
+    UNION ALL
+    SELECT ' + @SourceColumn + ' FROM [SWVF_23_44.txt]
+    UNION ALL
+    SELECT ' + @SourceColumn + ' FROM [SWVF_1_22.txt]
+    UNION ALL
+    SELECT ' + @SourceColumn + ' FROM [SWVF_45_66.txt]
+) AS SourceData
+ORDER BY LEN([' + @SourceColumn + ']) DESC;';
+
+    -- Step 5: Execute the Dynamic SQL
+	--PRINT @SQL
+    EXEC sp_executesql @SQL;
+
+    FETCH NEXT FROM cur INTO @OhioColumn, @SourceColumn, @ColumnType, @MaxLength;
+END
+CLOSE cur;
+DEALLOCATE cur;
+
+-- Step 6: Display Results (Only Problematic Fields)
+SELECT * FROM #TempResults --ORDER BY MaxLength DESC;
+
+-- Cleanup Temp Table
+DROP TABLE IF EXISTS #TempResults;

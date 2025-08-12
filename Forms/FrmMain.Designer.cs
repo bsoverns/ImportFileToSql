@@ -244,7 +244,8 @@
             this.cmbFileType.FormattingEnabled = true;
             this.cmbFileType.Items.AddRange(new object[] {
             "*.csv",
-            "*.txt"});
+            "*.txt",
+            "*.*"});
             this.cmbFileType.Location = new System.Drawing.Point(120, 97);
             this.cmbFileType.Name = "cmbFileType";
             this.cmbFileType.Size = new System.Drawing.Size(146, 21);
